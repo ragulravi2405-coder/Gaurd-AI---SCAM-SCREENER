@@ -1,92 +1,20 @@
-# Consumer Rights & Scam Screener
+<div align="center">
+<img width="1200" height="475" alt="GHBanner" src="https://ai.google.dev/static/site-assets/images/share-ais-513315318.png" />
+</div>
 
-A web application that helps users identify potential scams and understand consumer rights. Users can analyze suspicious messages, emails, websites, or offers using AI-powered insights and receive guidance on possible risks and recommended actions.
+# Run and deploy your AI Studio app
 
-## Features
+This contains everything you need to run your app locally.
 
-- 🔍 Scam detection and analysis
-- 🤖 AI-powered risk assessment
-- 📋 Consumer rights guidance
-- ⚡ Fast and responsive interface
-- 📱 Mobile-friendly design
+View your app in AI Studio: https://ai.studio/apps/6a59308a-c439-47a9-a3a8-edccb868f184
 
-## Tech Stack
+## Run Locally
 
-- React
-- TypeScript
-- Vite
-- Tailwind CSS
-- Google Gemini API
+**Prerequisites:**  Node.js
 
-## Getting Started
 
-### Prerequisites
-
-- Node.js (v18 or later)
-- npm
-
-### Installation
-
-1. Clone the repository
-
-```bash
-git clone https://github.com/your-username/consumer-rights-scam-screener.git
-```
-
-2. Navigate to the project directory
-
-```bash
-cd consumer-rights-scam-screener
-```
-
-3. Install dependencies
-
-```bash
-npm install
-```
-
-4. Create a `.env.local` file in the project root and add your API key
-
-```env
-GEMINI_API_KEY=your_api_key_here
-```
-
-5. Start the development server
-
-```bash
-npm run dev
-```
-
-6. Open your browser and visit
-
-```
-http://localhost:5173
-```
-
-## Build for Production
-
-```bash
-npm run build
-```
-
-## Project Structure
-
-```
-src/
-├── components/
-├── pages/
-├── services/
-├── utils/
-├── assets/
-└── App.tsx
-```
-
-## Environment Variables
-
-| Variable | Description |
-|----------|-------------|
-| GEMINI_API_KEY | Google Gemini API Key |
-
-## License
-
-This project is developed for educational and internship assessment purposes.
+1. Install dependencies:
+   `npm install`
+2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+3. Run the app:
+   `npm run dev`

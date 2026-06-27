@@ -108,12 +108,31 @@ export default function App() {
         body: JSON.stringify({ text, file })
       });
 
-      if (!response.ok) {
-        const errPayload = await response.json();
-        throw new Error(errPayload.error || "Decompiling document failed.");
+      const responseText = await response.text();
+      let parsedPayload: any = null;
+      try {
+        parsedPayload = JSON.parse(responseText);
+      } catch (e) {
+        // Not JSON
       }
 
-      const parsedResult: AnalysisResult = await response.json();
+      if (!response.ok) {
+        if (parsedPayload && parsedPayload.error) {
+          throw new Error(parsedPayload.error);
+        }
+        if (responseText && (responseText.trim().startsWith("<") || responseText.includes("<!DOCTYPE html>"))) {
+          throw new Error(
+            "The analyzer backend returned an HTML page instead of JSON. If you have deployed this application to Vercel, GitHub Pages, or Netlify, please note that this is a full-stack application. It requires a running Node.js backend (Express server in server.ts) to communicate with Gemini. A static-only hosting platform will fail to run the backend."
+          );
+        }
+        throw new Error(responseText || "Decompiling document failed.");
+      }
+
+      if (!parsedPayload) {
+        throw new Error("Invalid response received from server.");
+      }
+
+      const parsedResult: AnalysisResult = parsedPayload;
       setCurrentResult(parsedResult);
 
       const titleVal = file 
