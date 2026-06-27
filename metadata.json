@@ -1,6 +1,6 @@
 {
-  "name": "Consumer Rights & Scam Screener",
-  "description": "Scans agreements, documents, and messages to flag hidden charges and potential scams in simple, readable English.",
+  "name": "GUAR AI",
+  "description": "Scans agreements, documents, and messages to flag hidden charges and potential scams in simple plain language, supporting English, Tamil, Hindi, Malayalam, Telugu, and Kannada.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

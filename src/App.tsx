@@ -8,6 +8,8 @@ import AuthForm from "./components/AuthForm";
 import ScannerForm from "./components/ScannerForm";
 import ResultsView from "./components/ResultsView";
 import HistoryList from "./components/HistoryList";
+import ProfileCustomizer from "./components/ProfileCustomizer";
+import { Language, translations } from "./components/translations";
 import { motion } from "motion/react";
 import { 
   ShieldCheck, ShieldAlert, Scale, BrainCircuit, RefreshCw, Layers, CheckCircle2,
@@ -17,12 +19,23 @@ import {
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [authFormVisible, setAuthFormVisible] = useState(false);
+  const [profileCustomizerVisible, setProfileCustomizerVisible] = useState(false);
+  const [lang, setLang] = useState<Language>(() => {
+    const saved = localStorage.getItem("guarai_lang");
+    return (saved as Language) || "en";
+  });
+  const t = translations[lang];
   const [activeTab, setActiveTab] = useState<"scan" | "history">("scan");
   const [scans, setScans] = useState<ScanRecord[]>([]);
   const [currentResult, setCurrentResult] = useState<AnalysisResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [historyLoading, setHistoryLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const handleLanguageChange = (newLang: Language) => {
+    setLang(newLang);
+    localStorage.setItem("guarai_lang", newLang);
+  };
 
   // Synchronize authenticated user state
   useEffect(() => {
@@ -193,6 +206,9 @@ export default function App() {
           if (tab === "history") setCurrentResult(null);
         }}
         historyCount={scans.length}
+        lang={lang}
+        onLanguageChange={handleLanguageChange}
+        onShowProfileCustomizer={() => setProfileCustomizerVisible(true)}
       />
 
       {/* 2. Authentication Modal Popup */}
@@ -200,6 +216,15 @@ export default function App() {
         <AuthForm
           onClose={() => setAuthFormVisible(false)}
           onSuccess={() => fetchScans()}
+        />
+      )}
+
+      {/* Profile Customizer Modal */}
+      {profileCustomizerVisible && user && (
+        <ProfileCustomizer
+          user={user}
+          onClose={() => setProfileCustomizerVisible(false)}
+          lang={lang}
         />
       )}
 
@@ -219,15 +244,15 @@ export default function App() {
               >
                 <div className="inline-flex items-center gap-1.5 bg-white/50 backdrop-blur-md text-fuchsia-700 text-[11px] font-extrabold px-3.5 py-1 rounded-full uppercase border border-white shadow-2xs">
                   <BrainCircuit className="w-4 h-4 animate-spin text-fuchsia-600" />
-                  AGENCY-GRADE CONSUMER INTELLIGENCE
+                  {t.agencyIntelligence}
                 </div>
                 
                 <h2 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 leading-tight">
-                  Demystify Complex Contracts & Pasted Scams Instantly
+                  {t.landingTitle}
                 </h2>
                 
                 <p className="text-sm sm:text-base text-slate-600/95 leading-relaxed max-w-xl mx-auto font-medium">
-                  Financial entities and digital platforms bury predatory traps, exit penalties, and surprise recurring charges in complicated legal templates. Drop any contract or message to translate them to plain English.
+                  {t.landingDesc}
                 </p>
 
                 {/* Educational Bento grid for Consumer Rights protection */}
@@ -236,9 +261,9 @@ export default function App() {
                     <div className="p-2 bg-amber-50/60 rounded-lg text-amber-600 w-fit mb-2.5 border border-white">
                       <Scale className="w-5 h-5" />
                     </div>
-                    <h4 className="font-extrabold text-xs tracking-wider uppercase text-slate-800">Exit / Termination Penalties</h4>
+                    <h4 className="font-extrabold text-xs tracking-wider uppercase text-slate-800">{t.exitPenaltiesTitle}</h4>
                     <p className="text-[11.5px] text-slate-550 mt-1 leading-relaxed font-semibold">
-                      Many services auto-charge penalty percentages when trying to cancel membership early. We isolate exit terms instantly.
+                      {t.exitPenaltiesDesc}
                     </p>
                   </div>
 
@@ -246,9 +271,9 @@ export default function App() {
                     <div className="p-2 bg-indigo-50/60 rounded-lg text-indigo-650 w-fit mb-2.5 border border-white">
                       <Layers className="w-5 h-5" />
                     </div>
-                    <h4 className="font-extrabold text-xs tracking-wider uppercase text-slate-800">Subscription Loops</h4>
+                    <h4 className="font-extrabold text-xs tracking-wider uppercase text-slate-800">{t.subLoopsTitle}</h4>
                     <p className="text-[11.5px] text-slate-550 mt-1 leading-relaxed font-semibold">
-                      Automatic renewal terms loop and auto-debit payments from bank balances without sending prior notices or simple summaries.
+                      {t.subLoopsDesc}
                     </p>
                   </div>
 
@@ -256,9 +281,9 @@ export default function App() {
                     <div className="p-2 bg-red-50/60 rounded-lg text-red-550 w-fit mb-2.5 border border-white">
                       <ShieldAlert className="w-5 h-5" />
                     </div>
-                    <h4 className="font-extrabold text-xs tracking-wider uppercase text-slate-800">Fraud Phishing Clues</h4>
+                    <h4 className="font-extrabold text-xs tracking-wider uppercase text-slate-800">{t.phishingTitle}</h4>
                     <p className="text-[11.5px] text-slate-550 mt-1 leading-relaxed font-semibold">
-                      Suspicious urgent demands, prepayment triggers, unverified email claims, and false prize grants are instantly flagged.
+                      {t.phishingDesc}
                     </p>
                   </div>
                 </div>
@@ -268,10 +293,10 @@ export default function App() {
                     <div>
                       <h4 className="text-sm font-extrabold text-indigo-950 flex items-center gap-1.5">
                         <CheckCircle2 className="w-4.5 h-4.5 text-indigo-500" />
-                        Want to archive scans forever?
+                        {t.archiveNoticeTitle}
                       </h4>
                       <p className="text-xs text-slate-650 mt-0.5 font-semibold">
-                        Create a free workspace now to sync documents on cloud Firestore instead of guest storage.
+                        {t.archiveNoticeDesc}
                       </p>
                     </div>
                     <button
@@ -279,7 +304,7 @@ export default function App() {
                       className="px-4.5 py-2.5 bg-indigo-600 text-white font-bold rounded-xl text-xs hover:bg-indigo-700 transition-colors shadow-xs cursor-pointer flex items-center gap-1 shrink-0"
                     >
                       <UserPlus className="w-3.5 h-3.5" />
-                      Make Account
+                      {t.makeAccount}
                     </button>
                   </div>
                 )}
@@ -291,13 +316,13 @@ export default function App() {
               <div className="bg-red-50/30 backdrop-blur-md border border-red-200/50 text-red-900 rounded-[24px] p-5 text-sm max-w-4xl mx-auto flex items-start gap-3">
                 <FileWarning className="w-5.5 h-5.5 shrink-0 mt-0.5 text-red-500" />
                 <div>
-                  <h4 className="font-bold">Scanning Document Failed</h4>
+                  <h4 className="font-bold">{t.warningHeader}</h4>
                   <p className="text-xs text-red-750 mt-1 font-semibold">{error}</p>
                   <button
                     onClick={() => setError(null)}
                     className="mt-3.5 px-4 py-2 border border-red-200/40 hover:bg-white bg-white/30 rounded-xl text-xs font-bold transition-all cursor-pointer"
                   >
-                    Clear Warning
+                    {t.clearWarning}
                   </button>
                 </div>
               </div>
@@ -314,28 +339,28 @@ export default function App() {
                   <RefreshCw className="w-8 h-8 text-indigo-500 animate-spin" />
                 </div>
                 <div className="space-y-2 max-w-sm mx-auto">
-                  <h3 className="text-lg font-extrabold text-slate-800">Decompiling legal contract clauses...</h3>
+                  <h3 className="text-lg font-extrabold text-slate-800">{t.decompilingTitle}</h3>
                   <p className="text-xs text-slate-550 font-bold leading-relaxed">
-                    Our AI Screener model is isolating sentence variables, looking up renewal traps, and calculating threat score indexes.
+                    {t.decompilingSubtitle}
                   </p>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-left max-w-xl mx-auto">
                   <div className="p-3.5 bg-white/40 backdrop-blur-xs rounded-xl border border-white">
-                    <span className="text-[10px] text-indigo-500 font-extrabold tracking-widest block uppercase">STEP 1</span>
-                    <span className="text-xs text-slate-650 font-bold">Unveiling legalese</span>
+                    <span className="text-[10px] text-indigo-500 font-extrabold tracking-widest block uppercase">{t.step1}</span>
+                    <span className="text-xs text-slate-650 font-bold">{t.step1Desc}</span>
                   </div>
                   <div className="p-3.5 bg-white/40 backdrop-blur-xs rounded-xl border border-white">
-                    <span className="text-[10px] text-fuchsia-500 font-extrabold tracking-widest block uppercase">STEP 2</span>
-                    <span className="text-xs text-slate-650 font-bold">Scoping exit penalties</span>
+                    <span className="text-[10px] text-fuchsia-500 font-extrabold tracking-widest block uppercase">{t.step2}</span>
+                    <span className="text-xs text-slate-650 font-bold">{t.step2Desc}</span>
                   </div>
                   <div className="p-3.5 bg-white/40 backdrop-blur-xs rounded-xl border border-white">
-                    <span className="text-[10px] text-amber-500 font-extrabold tracking-widest block uppercase">STEP 3</span>
-                    <span className="text-xs text-slate-650 font-bold">Checking urgency tacts</span>
+                    <span className="text-[10px] text-amber-500 font-extrabold tracking-widest block uppercase">{t.step3}</span>
+                    <span className="text-xs text-slate-650 font-bold">{t.step3Desc}</span>
                   </div>
                   <div className="p-3.5 bg-white/40 backdrop-blur-xs rounded-xl border border-white">
-                    <span className="text-[10px] text-emerald-500 font-extrabold tracking-widest block uppercase">STEP 4</span>
-                    <span className="text-xs text-slate-650 font-bold">Rendering plaintext report</span>
+                    <span className="text-[10px] text-emerald-500 font-extrabold tracking-widest block uppercase">{t.step4}</span>
+                    <span className="text-xs text-slate-650 font-bold">{t.step4Desc}</span>
                   </div>
                 </div>
               </motion.div>
@@ -350,6 +375,7 @@ export default function App() {
               >
                 <ResultsView
                   result={currentResult}
+                  lang={lang}
                   onReset={() => {
                     setCurrentResult(null);
                     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -363,6 +389,7 @@ export default function App() {
               <ScannerForm
                 onAnalyze={handleAnalyze}
                 loading={loading}
+                lang={lang}
               />
             )}
 
@@ -375,6 +402,7 @@ export default function App() {
             onDeleteScan={handleDeleteScan}
             loading={historyLoading}
             onRefresh={fetchScans}
+            lang={lang}
           />
         )}
 
